@@ -99,20 +99,94 @@ router.post('/', async (req, res) => {
         messages: conversationHistory,
       });
     } catch (apiError) {
-      console.warn('Anthropic API Error:', apiError.message);
-      // Return mock response if API fails (e.g., no credits, rate limit, etc.)
+      console.error('Anthropic API Error:', apiError.message);
+      console.warn('⚠️  Using fallback response - API unavailable');
+      
+      // Return intelligent mock response based on user message
+      const lowerMsg = message.toLowerCase();
+      let emotionalState = 'uncertain';
+      let stressLevel = 'Medium';
+      let confidence = 65;
+      let suggestions = [];
+      let explanation = '';
+      
+      if (lowerMsg.includes('anxious') || lowerMsg.includes('worry') || lowerMsg.includes('panic')) {
+        emotionalState = 'anxious';
+        stressLevel = 'High';
+        confidence = 78;
+        explanation = "It sounds like anxiety is weighing on you right now. That's a real feeling that many people experience, and it's manageable with the right tools and support.";
+        suggestions = [
+          'Practice grounding: name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell, 1 you can taste',
+          'Try the 4-7-8 breathing technique: inhale for 4, hold for 7, exhale for 8',
+          "Remind yourself: this feeling is temporary and you've handled tough moments before"
+        ];
+      } else if (lowerMsg.includes('overwhelm') || lowerMsg.includes('stressed') || lowerMsg.includes('too much')) {
+        emotionalState = 'overwhelmed';
+        stressLevel = 'High';
+        confidence = 80;
+        explanation = "You're carrying a lot right now and that's a lot to handle. It's completely normal to feel overwhelmed - breaking things down into smaller pieces really helps.";
+        suggestions = [
+          'Write down ALL the things in your head - get them out and onto paper',
+          'Pick just ONE thing to focus on right now, put the rest aside temporarily',
+          'Take a real break: step outside, move your body, or just sit quietly for 5 minutes'
+        ];
+      } else if (lowerMsg.includes('sad') || lowerMsg.includes('depressed') || lowerMsg.includes('lonely')) {
+        emotionalState = 'sad';
+        stressLevel = 'High';
+        confidence = 75;
+        explanation = "You're going through something difficult and that heaviness is real. Reaching out, even like this, shows you're looking for a way through.";
+        suggestions = [
+          'Connect with one person today - call, text, or be near someone who cares',
+          'Do one small thing that usually brings you comfort',
+          "Be kind to yourself - you're struggling and that deserves compassion, not judgment"
+        ];
+      } else if (lowerMsg.includes('tired') || lowerMsg.includes('burnt') || lowerMsg.includes('exhausted')) {
+        emotionalState = 'burnt out';
+        stressLevel = 'High';
+        confidence = 77;
+        explanation = "You're running on empty - burnout is your signal that something needs to change. Listening to that signal is important.";
+        suggestions = [
+          'Identify one thing you can stop doing or delegate this week',
+          'Schedule real rest time like you would any important appointment',
+          'Do something restorative that has nothing to do with your usual responsibilities'
+        ];
+      } else if (lowerMsg.includes('good') || lowerMsg.includes('great') || lowerMsg.includes('happy') || lowerMsg.includes('amazing')) {
+        emotionalState = 'positive';
+        stressLevel = 'Low';
+        confidence = 82;
+        explanation = "You're in a good place right now and that's wonderful! You might be sharing this because you want to maintain this feeling or appreciate it more deeply.";
+        suggestions = [
+          "Pause and really notice what's contributing to this positive mood",
+          'Share this moment with someone who cares about you',
+          "Reflect on what you've done to get here - you can build on these strengths"
+        ];
+      } else if (lowerMsg.includes('hurt') || lowerMsg.includes('harm') || lowerMsg.includes('self-harm')) {
+        emotionalState = 'in crisis';
+        stressLevel = 'High';
+        confidence = 85;
+        explanation = "I'm genuinely concerned about what you're sharing. You deserve real professional support right now, not just an AI.";
+        suggestions = [
+          'Contact the 988 Suicide & Crisis Lifeline (call or text 988 in the US)',
+          "Go to your nearest emergency room if you're in immediate danger",
+          'Text "HELLO" to 741741 for the Crisis Text Line'
+        ];
+      } else {
+        explanation = `I hear what you're saying about "${message.substring(0, 40)}..." and want you to know your feelings matter. Whatever you're experiencing right now is valid.`;
+        suggestions = [
+          'Take a moment to check in with yourself - what would help right now?',
+          "Remember that talking about it, like you're doing, is a positive step",
+          'Be patient and gentle with yourself today'
+        ];
+      }
+      
       return res.json({
-        emotional_state: 'acknowledged',
-        stress_level: message.toLowerCase().includes('overwhelm') || message.toLowerCase().includes('anxious') ? 'High' : 'Medium',
-        confidence: 75,
-        explanation: `I hear you saying: "${message}". Your feelings are valid and understandable. Take a moment to breathe - there are things you can do right now to help.`,
-        suggestions: [
-          'Try a 5-minute breathing exercise: breathe in for 4, hold for 4, exhale for 4',
-          'Go for a short walk or stretch to release physical tension',
-          'Write down what you\'re feeling to process your emotions'
-        ],
-        urgency_flag: message.toLowerCase().includes('hurt') || message.toLowerCase().includes('harm'),
-        affirmation: 'You\'re stronger than you think, and reaching out for support is brave.'
+        emotional_state: emotionalState,
+        stress_level: stressLevel,
+        confidence: confidence,
+        explanation: explanation,
+        suggestions: suggestions,
+        urgency_flag: lowerMsg.includes('hurt') || lowerMsg.includes('harm') || lowerMsg.includes('suicide'),
+        affirmation: "Your willingness to acknowledge how you're feeling is the first step toward feeling better."
       });
     }
 
