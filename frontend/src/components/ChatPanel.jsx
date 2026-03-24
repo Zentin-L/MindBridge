@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { SuggestionCards } from './SuggestionCards';
 import { EmergencyBanner } from './EmergencyBanner';
@@ -14,6 +14,7 @@ export const ChatPanel = ({
   isLoading,
   onPromptSelect,
 }) => {
+  const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -24,6 +25,7 @@ export const ChatPanel = ({
 
   // Auto-resize textarea
   const handleTextAreaChange = (e) => {
+    setInputValue(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height =
@@ -33,11 +35,13 @@ export const ChatPanel = ({
 
   // Handle send
   const handleSend = () => {
-    const text = textareaRef.current.value.trim();
+    const text = inputValue.trim();
     if (text) {
       onSendMessage(text);
-      textareaRef.current.value = '';
-      textareaRef.current.style.height = 'auto';
+      setInputValue('');
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
     }
   };
 
@@ -149,13 +153,10 @@ export const ChatPanel = ({
         {/* Prompt chips only show when chat is empty */}
         <PromptChips
           onSelect={(prompt) => {
-            if (textareaRef.current) {
-              textareaRef.current.value = prompt;
-              textareaRef.current.focus();
-              handleTextAreaChange({
-                target: textareaRef.current,
-              });
-            }
+            setInputValue(prompt);
+            setTimeout(() => {
+              textareaRef.current?.focus();
+            }, 0);
           }}
           hidden={!isEmptyChat}
         />
@@ -164,11 +165,7 @@ export const ChatPanel = ({
         <div className="flex gap-3">
           <textarea
             ref={textareaRef}
-            value={
-              typeof textareaRef.current?.value === 'string'
-                ? textareaRef.current.value
-                : ''
-            }
+            value={inputValue}
             onChange={handleTextAreaChange}
             onKeyDown={handleKeyDown}
             placeholder="Share how you're feeling..."
@@ -187,9 +184,9 @@ export const ChatPanel = ({
         </div>
 
         {/* Character counter */}
-        {textareaRef.current?.value?.length > 200 && (
+        {inputValue?.length > 200 && (
           <p className="text-xs text-ink-soft text-right">
-            {textareaRef.current.value.length} / 1000
+            {inputValue.length} / 1000
           </p>
         )}
       </div>

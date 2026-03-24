@@ -5,7 +5,8 @@ const { analyzeRateLimiter } = require('./middleware/rateLimit');
 const analyzeRoute = require('./routes/analyze');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const BASE_PORT = Number(process.env.PORT) || 3001;
+const MAX_PORT_TRIES = 10;
 
 // Middleware
 app.use(express.json());
@@ -26,8 +27,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Debug endpoint
+app.get('/api/debug', (req, res) => {
+  res.json({ routes: 'analyze endpoint mounted at /api/analyze' });
+});
+
 // Analyze endpoint with rate limiting
-app.post('/api/analyze', analyzeRateLimiter, analyzeRoute);
+app.use('/api/analyze', analyzeRateLimiter, analyzeRoute);
 
 // 404 handler
 app.use((req, res) => {
@@ -43,11 +49,29 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🧠 MindBridge backend running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.warn('⚠️  ANTHROPIC_API_KEY is not set');
-  }
-});
+// Start server with automatic fallback if a port is already in use.
+const startServer = (port, attempt = 1) => {
+  const server = app.listen(port, () => {
+    console.log(`🧠 MindBridge backend running on port ${port}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    if (!process.env.ANTHROPIC_API_KEY) {
+      console.warn('⚠️  ANTHROPIC_API_KEY is not set');
+    }
+  });
+
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE' && attempt < MAX_PORT_TRIES) {
+      const nextPort = port + 1;
+      console.warn(
+        `⚠️  Port ${port} is in use. Retrying on port ${nextPort}...`
+      );
+      startServer(nextPort, attempt + 1);
+      return;
+    }
+
+    console.error('Failed to start server:', error.message);
+    process.exit(1);
+  });
+};
+
+startServer(BASE_PORT);

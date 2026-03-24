@@ -99,7 +99,7 @@ function App() {
           messages={messages}
           onSendMessage={handleSendMessage}
           isLoading={isLoading}
-          onPromptSelect={(prompt) => {}}
+          onPromptSelect={handleQuickCheckIn}
         />
       </div>
 
