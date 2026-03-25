@@ -276,6 +276,14 @@ npm run preview
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## 🌿 Branch Workflow
+
+- Default branch: `main`
+- Typical publish flow:
+  - `git add .`
+  - `git commit -m "your message"`
+  - `git push origin main`
+
 ## 📄 License
 
 MIT License — feel free to use MindBridge in your projects.
