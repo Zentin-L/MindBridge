@@ -10,9 +10,37 @@ import { useAnalysis } from './hooks/useAnalysis';
  * Main layout with sidebar + chat panel split
  */
 function App() {
-  const [messages, setMessages] = useState([]);
-  const [currentAnalysis, setCurrentAnalysis] = useState(null);
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem('mindbridge_chat_messages');
+    try {
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+  const [currentAnalysis, setCurrentAnalysis] = useState(() => {
+    const saved = localStorage.getItem('mindbridge_current_analysis');
+    try {
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
   const { analyzeMessage, isLoading, error } = useAnalysis();
+
+  // Persist messages to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('mindbridge_chat_messages', JSON.stringify(messages));
+  }, [messages]);
+
+  // Persist currentAnalysis to localStorage whenever it changes
+  useEffect(() => {
+    if (currentAnalysis) {
+      localStorage.setItem('mindbridge_current_analysis', JSON.stringify(currentAnalysis));
+    } else {
+      localStorage.removeItem('mindbridge_current_analysis');
+    }
+  }, [currentAnalysis]);
 
   // Handle new message
   const handleSendMessage = useCallback(
