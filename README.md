@@ -58,6 +58,15 @@ cp .env.example backend/.env
 # ANTHROPIC_API_KEY=sk-ant-...
 ```
 
+Windows PowerShell alternative:
+```powershell
+# If .env.example exists at repo root
+Copy-Item .env.example backend/.env
+
+# If .env.example is missing, create backend/.env manually
+"ANTHROPIC_API_KEY=sk-ant-..." | Out-File -Encoding utf8 backend/.env
+```
+
 ### 3. Run Development Servers
 
 **Terminal 1 — Backend:**
@@ -267,6 +276,29 @@ cd frontend
 npm run preview
 # (serves built frontend on port 5173)
 ```
+
+## Scripts Reference
+
+### Backend (`backend/package.json`)
+- `npm run dev` - Start API server with auto-reload for development
+- `npm start` - Start API server in normal mode
+- `npm test` - Run backend tests
+
+### Frontend (`frontend/package.json`)
+- `npm run dev` - Start Vite development server
+- `npm run build` - Build production frontend to `frontend/dist`
+- `npm run preview` - Preview the production build locally
+
+## Troubleshooting
+
+- `ANTHROPIC_API_KEY` missing or invalid:
+  The backend will fail API calls to Claude. Verify `backend/.env` and restart the backend server.
+- CORS or network errors in the browser:
+  Ensure backend is running on `http://localhost:3001` and frontend on `http://localhost:5173`.
+- Frontend cannot reach backend in production:
+  Set `VITE_API_URL` in frontend env config to your deployed backend URL.
+- Port already in use:
+  Stop the conflicting process or run the app on another port via your dev server config.
 
 ## 🤝 Contributing
 
