@@ -2,6 +2,12 @@
 
 A compassionate, production-ready web application that provides supportive first-aid responses to users sharing their mental health concerns. Built with React, Node.js, and Claude AI.
 
+## 📌 Latest Update
+
+- Improved README onboarding with clearer environment setup steps.
+- Added command references for both frontend and backend scripts.
+- Included quick troubleshooting tips for common local setup issues.
+
 ## ✨ Features
 
 - 🧠 **Empathetic AI Responses** — Uses Claude Sonnet to provide warm, supportive first-aid guidance
