@@ -6,7 +6,7 @@ A compassionate, production-ready web application that provides supportive first
 
 - Improved README onboarding with clearer environment setup steps.
 - Added command references for both frontend and backend scripts.
-- Included quick troubleshooting tips for common local setup issues.
+- Test note: README edit pipeline is working from VS Code assistant changes.
 
 ## ✨ Features
 
