@@ -17,11 +17,11 @@ export const DailyCheckIn = ({ onCheckIn }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass rounded-2xl p-4 mb-6"
+      className="glass-3d rounded-2xl p-4 mb-6"
     >
       <button
         onClick={handleClick}
-        className="w-full py-3 bg-gradient-to-r from-sage to-sage-light text-ink font-semibold rounded-xl hover:shadow-lg transition-shadow active:scale-95 font-serif"
+        className="w-full py-3 bg-gradient-to-r from-sage to-sage-light text-ink font-semibold rounded-xl btn-3d font-serif"
       >
         Daily Check-In 🌤️
       </button>

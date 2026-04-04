@@ -27,18 +27,18 @@ export const StressMeter = ({ stress = null, confidence = 0 }) => {
   const strokeDashoffset = ((100 - stressNum) / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="font-serif text-xl font-bold text-ink mb-4">Stress Level</h3>
+    <div className="flex flex-col items-center glass-3d rounded-3xl p-6 mb-2">
+      <h3 className="font-serif text-xl font-bold text-ink mb-2">Stress Level</h3>
 
       {/* SVG Gauge */}
-      <div className="relative w-48 h-24 flex items-center justify-center">
+      <div className="relative w-48 h-28 flex items-center justify-center">
         <svg width="200" height="120" viewBox="0 0 200 120">
           {/* Background arc */}
           <path
             d="M 20 100 A 80 80 0 0 1 180 100"
             fill="none"
-            stroke="#e0e0e0"
-            strokeWidth="8"
+            stroke="#d4c9c2"
+            strokeWidth="10"
             strokeLinecap="round"
           />
 
@@ -53,12 +53,13 @@ export const StressMeter = ({ stress = null, confidence = 0 }) => {
             initial={{ strokeDashoffset: circumference }}
             animate={{ strokeDashoffset }}
             transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+            className="drop-shadow-sm"
           />
         </svg>
 
         {/* Center label */}
-        <div className="absolute text-center">
-          <div className="font-serif text-3xl font-bold text-ink">
+        <div className="absolute top-12 text-center">
+          <div className="font-serif text-3xl font-bold text-ink drop-shadow-sm">
             {stress || '—'}
           </div>
           <div className="text-sm text-ink-soft mt-1">
@@ -67,22 +68,23 @@ export const StressMeter = ({ stress = null, confidence = 0 }) => {
         </div>
       </div>
 
-      {/* Pulsing ring when High */}
+      {/* Pulsing ring when High ... */}
       {stress === 'High' && (
         <motion.div
-          className="mt-4 w-20 h-20 border-2 border-rose rounded-full"
+          className="absolute w-28 h-28 border-[3px] border-rose rounded-full"
           animate={{
             boxShadow: [
-              '0 0 0 0 rgba(201, 131, 122, 0.7)',
-              '0 0 0 15px rgba(201, 131, 122, 0)',
+              '0 0 0 0 rgba(201, 131, 122, 0.4)',
+              '0 0 0 20px rgba(201, 131, 122, 0)',
             ],
           }}
           transition={{ duration: 2, repeat: Infinity }}
+          style={{ top: '65px' }}
         />
       )}
 
       {/* Status text */}
-      <p className="text-xs text-ink-soft mt-4">
+      <p className="text-xs text-ink-soft mt-1">
         {!stress
           ? 'Share how you are feeling to start'
           : "You're in good hands"}

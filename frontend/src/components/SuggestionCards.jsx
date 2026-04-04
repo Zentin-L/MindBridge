@@ -59,7 +59,7 @@ export const SuggestionCards = ({ suggestions }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 + index * 0.1 }}
-          className="glass rounded-2xl p-4 hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer group"
+          className="card-3d rounded-2xl p-4 group"
         >
           <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">
             {card.emoji}

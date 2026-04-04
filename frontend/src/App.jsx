@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ChatPanel } from './components/ChatPanel';
 import { StressMeter } from './components/StressMeter';
 import { MoodHistory } from './components/MoodHistory';
@@ -10,6 +11,28 @@ import { useAnalysis } from './hooks/useAnalysis';
  * Main layout with sidebar + chat panel split
  */
 function App() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 50, stiffness: 200, mass: 1 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  // Parallax transform layers
+  const x1 = useTransform(smoothX, [0, 1920], [-40, 40]);
+  const y1 = useTransform(smoothY, [0, 1080], [-40, 40]);
+
+  const x2 = useTransform(smoothX, [0, 1920], [60, -60]);
+  const y2 = useTransform(smoothY, [0, 1080], [60, -60]);
+
+  const x3 = useTransform(smoothX, [0, 1920], [-30, 30]);
+  const y3 = useTransform(smoothY, [0, 1080], [30, -30]);
+
+  const handleMouseMove = (e) => {
+    mouseX.set(e.clientX);
+    mouseY.set(e.clientY);
+  };
+
   const [messages, setMessages] = useState(() => {
     const saved = localStorage.getItem('mindbridge_chat_messages');
     try {
@@ -80,16 +103,28 @@ function App() {
   }, [handleSendMessage]);
 
   return (
-    <div className="flex h-screen bg-cream overflow-hidden">
-      {/* Radial gradient background blobs */}
+    <div 
+      className="flex h-screen bg-cream bg-grid-pattern overflow-hidden relative"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Parallax reactive background blobs */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-80 h-80 bg-sage/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-40 right-20 w-96 h-96 bg-dusk/10 rounded-full blur-3xl" />
-        <div className="absolute top-60 right-40 w-72 h-72 bg-rose/5 rounded-full blur-3xl" />
+        <motion.div 
+          style={{ x: x1, y: y1 }}
+          className="absolute top-[5%] left-[5%] w-[40vw] h-[40vw] bg-sage/20 rounded-full blur-[90px]" 
+        />
+        <motion.div 
+          style={{ x: x2, y: y2 }}
+          className="absolute bottom-[-10%] right-[5%] w-[50vw] h-[50vw] bg-dusk/20 rounded-full blur-[120px]" 
+        />
+        <motion.div 
+          style={{ x: x3, y: y3 }}
+          className="absolute top-[30%] right-[30%] w-[35vw] h-[35vw] bg-rose/10 rounded-full blur-[80px]" 
+        />
       </div>
 
       {/* Left Sidebar */}
-      <div className="hidden md:flex flex-col w-80 bg-white/40 glass border-r border-parchment/30 p-6 overflow-y-auto relative z-10">
+      <div className="hidden md:flex flex-col w-80 bg-white/40 glass-3d border-r border-parchment/30 p-6 overflow-y-auto relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="text-5xl mb-2">🧠</div>

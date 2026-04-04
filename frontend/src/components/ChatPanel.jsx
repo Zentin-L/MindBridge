@@ -88,16 +88,16 @@ export const ChatPanel = ({
             {msg.role === 'user' ? (
               // User message
               <div className="flex justify-end">
-                <div className="max-w-sm bg-gradient-to-br from-sage to-sage-light text-ink rounded-3xl px-5 py-3 shadow-md">
+                <div className="max-w-sm bg-gradient-to-br from-sage to-sage-light text-ink rounded-3xl px-5 py-3 shadow-3d hover:-translate-y-0.5 transition-transform duration-300 relative z-10">
                   {msg.content}
                 </div>
               </div>
             ) : (
               // AI message
               <div className="flex gap-3 max-w-2xl">
-                <div className="text-2xl flex-shrink-0">💙</div>
+                <div className="text-2xl flex-shrink-0 z-10 hover:scale-110 transition-transform cursor-default">💙</div>
                 <div className="flex-1">
-                  <div className="glass rounded-2xl p-4">
+                  <div className="glass-3d rounded-2xl p-4">
                     <p className="text-ink-soft text-sm leading-relaxed mb-4">
                       {msg.analysis?.explanation}
                     </p>
@@ -125,8 +125,8 @@ export const ChatPanel = ({
         {/* Loading state */}
         {isLoading && (
           <motion.div className="flex gap-3 max-w-2xl">
-            <div className="text-2xl">🧠</div>
-            <div className="glass rounded-2xl p-4 flex-1">
+            <div className="text-2xl z-10">🧠</div>
+            <div className="glass-3d rounded-2xl p-4 flex-1">
               <div className="flex gap-2">
                 {[0, 1, 2].map((i) => (
                   <motion.div
@@ -169,15 +169,13 @@ export const ChatPanel = ({
             onChange={handleTextAreaChange}
             onKeyDown={handleKeyDown}
             placeholder="Share how you're feeling..."
-            className="flex-1 p-3 rounded-xl border-2 border-parchment bg-white text-ink placeholder-ink-soft focus:outline-none focus:border-sage focus:ring-2 focus:ring-sage/20 resize-none max-h-32"
+            className="flex-1 p-3 rounded-xl border-2 border-parchment bg-white text-ink placeholder-ink-soft shadow-inner-3d focus:outline-none focus:border-sage focus:ring-2 focus:ring-sage/20 resize-none max-h-32 transition-shadow"
             rows="1"
           />
           <motion.button
             onClick={handleSend}
             disabled={isLoading}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-5 bg-gradient-to-r from-sage to-sage-light text-ink font-semibold rounded-xl hover:shadow-lg disabled:opacity-50 transition-all active:scale-95 self-end"
+            className="px-5 py-3 bg-gradient-to-r from-sage to-sage-light text-ink font-semibold rounded-xl btn-3d disabled:opacity-50 self-end"
           >
             Send
           </motion.button>

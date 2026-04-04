@@ -26,6 +26,11 @@ export default {
       backdropBlur: {
         xs: '2px',
       },
+      boxShadow: {
+        '3d': '0 10px 30px -10px rgba(0,0,0,0.1), 0 4px 8px -4px rgba(0,0,0,0.06)',
+        '3d-hover': '0 20px 40px -10px rgba(0,0,0,0.15), 0 10px 20px -5px rgba(0,0,0,0.1)',
+        'inner-3d': 'inset 0 4px 6px -1px rgba(0,0,0,0.08), inset 0 2px 4px -1px rgba(0,0,0,0.04)',
+      },
     },
   },
   plugins: [
